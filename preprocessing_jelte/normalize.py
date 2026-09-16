@@ -179,10 +179,45 @@ def normalize_text(text: str) -> str:
 
     return text
 
+def normalize_to_ascii(text: str) -> str:
+    text = normalize_text(text)
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    return text
+
+def drop_RT(text: str) -> str:
+    return text.replace(" RT ", "")
+
+def replace_at_usernames(text: str) -> str:
+    return re.sub(r"@\w+", " user ", text)
+
+def remove_ampersand_with_hashtag_numbers(text: str) -> str:
+    return re.sub(r"&#\d+;", "", text)
+
+def remove_andamp(text: str) -> str:
+    return text.replace("&amp;", " and ")
+
+def fix_beginning_end_quotes(text: str) -> str:
+    # Removes quotation marks (" or ') at the beginning and end of entire text; only if they are at both ends and are the same type of quote.
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in {"'", '"'} and text.count(text[0]) == 2:
+        return text[1:-1]
+    return text.strip()
+    
+
+def normalize_all_appy(text: str, keep_usernames: bool = True) -> str:
+    text = drop_RT(text)
+    if not keep_usernames:
+        text = replace_at_usernames(text)
+    text = remove_ampersand_with_hashtag_numbers(text)
+    text = remove_andamp(text)
+    text = normalize_text(text)
+    text = fix_beginning_end_quotes(text)
+    return text
+
 if __name__ == "__main__":
     examples = [
         "you^are;so;w0rthl3ss@nobody^likes;you",
-        "@annaBowling y0000u are s000 uuuuugly lol",
+        "@annaFootball y0000u are s000 uuuuugly lol",
         "h4ve a gr34t d4y everyone",
         "just chatting about c++ and node.js https://example.com",
         "i have 3 cats and 1 dog www.example.com/abc",
