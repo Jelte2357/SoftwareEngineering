@@ -45,8 +45,17 @@ def predict(texts: Sequence[str], model_dir: Path = MODEL_DIR) -> list[dict[str,
             logits = model(**encoded).logits
             probabilities = torch.softmax(logits, dim=-1)
             scores, labels = probabilities.max(dim=-1)
-            for label, score in zip(labels.cpu().tolist(), scores.cpu().tolist()):
-                results.append({"label": int(label), "confidence": float(score)})
+            for probability, label, score in zip(
+                probabilities.cpu().tolist(), labels.cpu().tolist(), scores.cpu().tolist()
+            ):
+                results.append(
+                    {
+                        "label": int(label),
+                        "confidence": float(score),
+                        "label_0_confidence": float(probability[0]),
+                        "label_1_confidence": float(probability[1]),
+                    }
+                )
         et = time.perf_counter()
         print(f"Predictions completed in {et - st:.2f} seconds.")
     return results
@@ -70,19 +79,19 @@ def main() -> None:
 
     texts = args.text
     
-    import pandas as pd
-    data = pd.read_csv("data.csv")
-    sample = data.sample(n=5000, random_state=42)
-    texts = sample["text"].tolist()
+    # import pandas as pd
+    # data = pd.read_csv("data.csv")
+    # sample = data.sample(n=5000, random_state=42)
+    # texts = sample["text"].tolist()
     
     
     predictions = predict(texts, args.model_dir)
 
     for text, result in zip(texts, predictions):
-        pass
-        # print(f"text: {text}")
-        # print(f"predicted_label: {result['label']}  confidence: {result['confidence']:.4f}")
-        # print()
+        print(f"text: {text}")
+        print(f"predicted_label: 0  confidence: {result['label_0_confidence']:.4f}")
+        print(f"predicted_label: 1  confidence: {result['label_1_confidence']:.4f}")
+        print()
 
 
 if __name__ == "__main__":
