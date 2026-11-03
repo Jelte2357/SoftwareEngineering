@@ -1,0 +1,17 @@
+/* Keep page text invisible while preserving the page's layout, images, and colors. */
+html:not([data-text-filter-ready]) body,
+html:not([data-text-filter-ready]) body * {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+}
+
+/* The delayed acknowledgement dialog is the only text allowed through the gate. */
+html:not([data-text-filter-ready]) [data-text-filter-gate] {
+    color: #202124 !important;
+    visibility: visible !important;
+}
+
+dialog[data-text-filter-gate]::backdrop {
+    background: rgb(0 0 0 / 55%);
+}
