@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hatespeech Filter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+
+    <section id="main_view">
+      <h1>Hatespeech Filter</h1>
+      <label for="threshold">Hide above confidence: <output id="threshold_value">0.50</output></label>
+      <input id="threshold" type="range" min="0" max="1" step="0.01">
+
+      <p id="mainStatus">Scores update the open page as they arrive.</p>
+      <button id="show_settings" type="button">Settings</button>
+    </section>
+    
+    <section id="settings_view" hidden>
+      <button id="back_button" class="back" type="button">Back</button>
+      <h1>Settings</h1>
+
+      <label for="server_url">Server URL</label>
+      <input id="server_url" type="url" placeholder="http://127.0.0.1:4352/" spellcheck="false">
+
+      <label for="wait_seconds">Wait before warning about a slow server (seconds)</label>
+      <input id="wait_seconds" type="number" min="0" max="30" step="0.5">
+
+      <label for="non_block_sites">Sites to exclude</label>
+      <textarea id="non_block_sites" rows="5" placeholder="example.com&#10;news.example.org"></textarea>
+
+      <p class="hint">One domain per line (includes subdomains automatically)</p>
+      <p id="status" role="status"></p>
+
+    </section>
+
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
