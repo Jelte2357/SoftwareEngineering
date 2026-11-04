@@ -1,0 +1,20 @@
+body {
+  width: 300px;
+  margin: 0;
+  color: #202124;
+  background: #fff;
+  font: 14px/1.4 system-ui, sans-serif;
+}
+
+main { padding: 16px; }
+h1 { margin: 0 0 8px; font-size: 17px; }
+p { margin: 12px 0; color: #52606d; font-size: 12px; }
+label { display: block; margin: 14px 0 5px; font-weight: 600; }
+input, textarea { box-sizing: border-box; width: 100%; }
+input[type="range"] { accent-color: #2563eb; }
+input[type="url"], input[type="number"], textarea { padding: 7px; border: 1px solid #b8bec8; border-radius: 5px; font: inherit; }
+textarea { resize: vertical; }
+button { width: 100%; margin-top: 8px; padding: 8px 12px; border: 0; border-radius: 5px; color: white; background: #2563eb; font: inherit; cursor: pointer; }
+button.back { width: auto; margin: 0 0 12px; padding: 4px 0; color: #2563eb; background: transparent; }
+.hint { color: #52606d; font-size: 11px; }
+#status { min-height: 1.3em; margin-bottom: 0; color: #2563eb; font-size: 12px; }
