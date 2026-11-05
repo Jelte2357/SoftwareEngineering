@@ -3,23 +3,6 @@ import unittest
 
 from process import remove_empty_text_row_cmnts, recode_UCBerkeley_label
 
-
-#--- Functions ---
-
-# def recode_UCBerkeley_label(label: float) -> int:
-#     if label < 0.5:
-#         return 0
-#     else:
-#         return 1
-
-# def remove_specific_hatespeech_dataset(df: pd.DataFrame) -> pd.DataFrame:
-#     df = df[~((df['text'] == "content") & (df['label'] == "Label"))]
-#     return df
-
-# def remove_empty_text_row_cmnts(df: pd.DataFrame) -> pd.DataFrame:
-#     df = df[df['text'].str.strip() != '']
-#     return df
-
 #--- Tests ---
 
 class ProcessingTests(unittest.TestCase):
