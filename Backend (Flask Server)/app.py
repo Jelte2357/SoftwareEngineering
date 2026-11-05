@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from predict import HateSpeechPredictor
 from config import *
 from database import Database
+import normalize
 
 
 app = Flask(__name__)
@@ -17,7 +18,7 @@ classifier = HateSpeechPredictor(
 db = Database(db_path=DB_PATH)
 
 def predict_texts(texts: tuple[str]) -> list[float]:
-    unique_texts = dict.fromkeys(texts)
+    unique_texts = list(map(normalize.normalize_all_apply, dict.fromkeys(texts)))  # Remove duplicates while preserving order and normalize texts
     text_to_hash = {text: hashlib.blake2b(text.encode("utf-8")).hexdigest() for text in unique_texts}
     hash_to_text = {hash: text for text, hash in text_to_hash.items()}
 

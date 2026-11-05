@@ -51,7 +51,7 @@ class HateSpeechPredictor:
     def predict(
         self,
         texts: Sequence[str]
-    ) -> list[dict[str, float | int]]:
+    ) -> list[float]:
         """
         Predict multiple texts and return probabilities.
         """
