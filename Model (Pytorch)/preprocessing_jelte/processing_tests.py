@@ -46,7 +46,7 @@ class ProcessingTests(unittest.TestCase):
         result = remove_empty_text_row_cmnts(df)
         self.assertEqual(list(result["label"]), [1, 0])
 
-    def test_remove_empties_works_with_empty_DF(self): # Tests if an empty dataframe works.  !!!!CURRENTLY FAILS!!!!
+    def test_remove_empties_works_with_empty_DF(self): # Tests if an empty dataframe works
         df = pd.DataFrame({
                     "text": [], 
                     "label": []
@@ -55,6 +55,13 @@ class ProcessingTests(unittest.TestCase):
         self.assertTrue(result.empty)
         self.assertEqual(list(result.columns), ["text", "label"])
 
+    def test_remove_empties_works_with_missing_values(self): # Tests if a dataframe with missing values works
+        df = pd.DataFrame({
+            "text": ["Hello", None, "World"],
+            "label": [1, 0, 0] 
+        })
+        result = remove_empty_text_row_cmnts(df)
+        self.assertEqual(list(result["text"]), ["Hello", "World"])
 
 if __name__ == "__main__":
     unittest.main()

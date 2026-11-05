@@ -14,6 +14,10 @@ def remove_specific_hatespeech_dataset(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def remove_empty_text_row_cmnts(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        return df
+    if df['text'].isnull().any():
+        df = df.dropna(subset=['text'])
     df = df[df['text'].str.strip() != '']
     return df
 
