@@ -35,7 +35,7 @@ def main():
     # XXX Process cmnts
     cmnts = pd.read_csv('./input/cmnts.csv')
     cmnts.columns = ["text", "label"]
-    cmnts["label"] = cmnts["label"].apply(lambda x: 1 if "non" in x.lower() else 0)
+    cmnts["label"] = cmnts["label"].apply(lambda x: 0 if "non" in x.lower() else 1)
     cmnts['text'] = cmnts['text'].apply(normalize_all_appy)
     cmnts = cmnts.drop_duplicates(subset=['text'], keep='first')
     cmnts = cmnts.dropna(subset=['text', 'label'])
