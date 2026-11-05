@@ -1,0 +1,41 @@
+text,predicted_label,confidence
+"Oh, brilliant, another Muslim family moving in; our neighborhood definitely needs less diversity.",1,0.9434285163879395
+"Wonderful, a Jewish colleague joined the team—because apparently we needed someone to blame for everything.",0,0.6501257419586182
+"Great, more Black students in the class; that will surely lower everyone's standards.",1,0.9174917936325073
+"Fantastic, a Roma family opened a shop nearby; just what this area didn't need.",1,0.9393453001976013
+"Oh good, another woman applying for the engineering role; I'm sure she'll be completely out of her depth.",0,0.9674399495124817
+"Perfect, a trans person at the meeting; now we'll have to pretend they deserve respect.",0,0.6856331825256348
+"Lovely, a gay couple bought the house next door; there goes the neighborhood.",0,0.9903286099433899
+"Brilliant, another refugee asking for help; why should people like them be welcome here?",0,0.7643791437149048
+"Wonderful, a disabled person wants to join the team; clearly inclusion is more important than competence.",0,0.9967638254165649
+"Great, more immigrants arriving; let's keep making excuses for people who don't belong.",1,0.566763162612915
+"Muslims are straight-up unwanted here, no cap.",1,0.9880492091178894
+Jewish people are shady as hell; keep them out of our community.,1,0.9962784647941589
+"Black people are trash and should get out, deadass.",1,0.9914857745170593
+Roma folks are a total problem; nobody wants them around.,1,0.997200608253479
+"Women are too dumb for leadership, fr.",1,0.9235622882843018
+Trans people are gross; keep that stuff away from us.,1,0.994264543056488
+Gay people are cringe and should stay out of our spaces.,1,0.9937816262245178
+"Refugees are leeches, kick them all out.",1,0.9961612224578857
+Disabled people are useless; don't let them hold the rest of us back.,1,0.993916928768158
+"Immigrants are ruining everything, and that's facts.",1,0.9958038926124573
+"""Muslims should never be accepted as part of our town.""",1,0.9836488962173462
+"""Jewish people can never be trusted, so keep them away.""",1,0.9952061772346497
+"""Black people do not belong in positions of authority.""",1,0.8925520777702332
+"""Roma families should be forced out of this neighborhood.""",1,0.9856815338134766
+"""Women should stay out of jobs that require real intelligence.""",1,0.9613325595855713
+"""Trans people should be excluded from public life.""",1,0.9302112460136414
+"""Gay people should hide who they are if they want to be accepted.""",1,0.8850669860839844
+"""Refugees deserve no help and should be sent away.""",1,0.9673700332641602
+"""People with disabilities are a burden and should be kept apart.""",1,0.828851044178009
+"""Immigrants should have no place in our society.""",1,0.9946435689926147
+Los musulmanes no deberían ser bienvenidos en nuestra comunidad.,0,0.9895514845848083
+Les Juifs ne devraient jamais être acceptés dans notre quartier.,0,0.998229444026947
+Schwarze Menschen gehören nicht in Führungspositionen.,0,0.9981142282485962
+Les familles roms devraient être expulsées de ce quartier.,0,0.997748076915741
+Le donne non sono adatte a ricoprire ruoli di comando.,0,0.9975311160087585
+Las personas trans deberían ser excluidas de la vida pública.,0,0.9702293872833252
+Pessoas gays não deveriam ser aceitas em nossa comunidade.,0,0.966892421245575
+Os refugiados não merecem ajuda e deveriam ir embora.,0,0.9606115818023682
+Las personas con discapacidad son una carga para la sociedad.,0,0.9964905381202698
+Los inmigrantes no pertenecen a nuestro país y deberían marcharse.,0,0.9966176152229309
