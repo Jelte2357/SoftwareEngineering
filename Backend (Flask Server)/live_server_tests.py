@@ -1,7 +1,12 @@
 import pandas as pd
 import unittest
 import requests
+import random
+from string import printable
 #--- Tests ---
+
+def generate_random_string(length: int) -> str:
+    return ''.join(random.choice(printable) for _ in range(length))
 
 class LiveTests(unittest.TestCase):
     def test_predict(self): # Tests if the function removes quotes at the beginning and end of the text
@@ -23,6 +28,14 @@ class LiveTests(unittest.TestCase):
         self.assertEqual(
             requests.post("http://127.0.0.1:4352/api/predict").status_code,
             400
+        )
+        self.assertEqual(
+            requests.post("http://127.0.0.1:4352/api/predict", json={r: r for r in [generate_random_string(10) for _ in range(5001)]}).status_code,
+            413
+        )
+        self.assertEqual(
+            requests.post("http://127.0.0.1:4352/api/predict", json={r: r for r in [generate_random_string(10000)]}).status_code,
+            200
         )
         
     def test_reclassify(self):
