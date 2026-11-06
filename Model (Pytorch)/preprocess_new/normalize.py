@@ -49,7 +49,7 @@ LOOKALIKE_MAP = {
     "с": "c", "С": "C",
     "у": "y", "У": "Y",
     "х": "x", "Х": "X",
-    "і": "i", "І": "I",
+    "і": "i", "І": "I", "ɪ": "i",
     "ѕ": "s", "Ѕ": "S",
     "м": "m", "М": "M",
     "н": "H", "Н": "H",
@@ -165,7 +165,6 @@ def normalize_text(text: str) -> str:
     text = _strip_emoji(text)
     text = REPEAT_CHAR.sub(r"\1\1", text)
     text = _fix_lookalikes(text)
-
     if _looks_upside_down(text):
         text = _fix_upside_down(text)
 
