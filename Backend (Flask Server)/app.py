@@ -68,7 +68,8 @@ def api_predict():
         }), 413
     
     keys, texts = zip(*payload.items())
-    texts = cast(tuple[str], normalize.normalize_all_apply(texts))
+    print(texts, type(texts))
+    texts = cast(tuple[str], tuple(map(normalize.normalize_all_apply, texts)))
     predictions = predict_texts(texts)
     results = dict(zip(keys, predictions))
     
