@@ -49,7 +49,7 @@ LOOKALIKE_MAP = {
     "с": "c", "С": "C",
     "у": "y", "У": "Y",
     "х": "x", "Х": "X",
-    "і": "i", "І": "I",
+    "і": "i", "І": "I", "ɪ": "i",
     "ѕ": "s", "Ѕ": "S",
     "м": "m", "М": "M",
     "н": "H", "Н": "H",
@@ -165,7 +165,6 @@ def normalize_text(text: str) -> str:
     text = _strip_emoji(text)
     text = REPEAT_CHAR.sub(r"\1\1", text)
     text = _fix_lookalikes(text)
-
     if _looks_upside_down(text):
         text = _fix_upside_down(text)
 
@@ -204,7 +203,7 @@ def fix_beginning_end_quotes(text: str) -> str:
     return text.strip()
     
 
-def normalize_all_appy(text: str, keep_usernames: bool = True) -> str:
+def normalize_all_apply(text: str, keep_usernames: bool = True) -> str:
     text = drop_RT(text)
     if not keep_usernames:
         text = replace_at_usernames(text)
@@ -238,4 +237,4 @@ if __name__ == "__main__":
         "ₕᵉₗˡₒ ₜₕᶦₛ ⁱₛ ₛᵘᵖₑʳˢᶜʳⁱₚₜ ₜₑₓₜ",
     ]
     for ex in examples:
-        print(f"{ex!r:55s} -> {normalize_text(ex)!r}")
+        print(f"{ex!r:55s} -> {normalize_all_apply(ex)!r}")

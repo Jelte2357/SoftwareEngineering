@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from normalize import normalize_text, normalize_to_ascii, normalize_all_appy
+from normalize import normalize_text, normalize_to_ascii, normalize_all_apply
 
 def recode_UCBerkeley_label(label: float) -> int:
     if label < 0.5:
@@ -27,7 +27,7 @@ def main():
     RacismDetection.columns = ["text", "label"]
     # Select only hateful messages
     RacismDetection = RacismDetection[RacismDetection['label'] == 1]
-    RacismDetection['text'] = RacismDetection['text'].apply(normalize_all_appy)
+    RacismDetection['text'] = RacismDetection['text'].apply(normalize_all_apply)
     RacismDetection = RacismDetection.drop_duplicates(subset=['text'], keep='first')
     RacismDetection = RacismDetection.dropna(subset=['text', 'label'])
     RacismDetection.to_csv('./output/RacismDetectionDataSet.csv', index=False)
@@ -36,7 +36,7 @@ def main():
     cmnts = pd.read_csv('./input/cmnts.csv')
     cmnts.columns = ["text", "label"]
     cmnts["label"] = cmnts["label"].apply(lambda x: 0 if "non" in x.lower() else 1)
-    cmnts['text'] = cmnts['text'].apply(normalize_all_appy)
+    cmnts['text'] = cmnts['text'].apply(normalize_all_apply)
     cmnts = cmnts.drop_duplicates(subset=['text'], keep='first')
     cmnts = cmnts.dropna(subset=['text', 'label'])
     cmnts = remove_empty_text_row_cmnts(cmnts)
@@ -46,7 +46,7 @@ def main():
     HateSpeechDataset = pd.read_csv('./input/HateSpeechDataset.csv')
     HateSpeechDataset.drop(columns=["Content_int"], inplace=True)
     HateSpeechDataset.columns = ["text", "label"]
-    HateSpeechDataset['text'] = HateSpeechDataset['text'].apply(normalize_all_appy)
+    HateSpeechDataset['text'] = HateSpeechDataset['text'].apply(normalize_all_apply)
     HateSpeechDataset = HateSpeechDataset.drop_duplicates(subset=['text'], keep='first')
     HateSpeechDataset = HateSpeechDataset.dropna(subset=['text', 'label'])
     HateSpeechDataset = remove_specific_hatespeech_dataset(HateSpeechDataset)
@@ -59,7 +59,7 @@ def main():
     # labeled_data.drop(labeled_data.columns[0], axis=1, inplace=True)
     # labeled_data.columns = ["label", "text"]
     # labeled_data = labeled_data.reindex(columns=["text", "label"])
-    # labeled_data['text'] = labeled_data['text'].apply(normalize_all_appy)
+    # labeled_data['text'] = labeled_data['text'].apply(normalize_all_apply)
     # labeled_data = labeled_data.drop_duplicates(subset=['text'], keep='first')
     # labeled_data = labeled_data.dropna(subset=['text', 'label'])
     # labeled_data.to_csv('./output/labeled_data.csv', index=False)
@@ -67,7 +67,7 @@ def main():
     # XXX Process 3DatasetsCombined (possibly bad)
     DatasetsCombined = pd.read_csv('./input/3DatasetsCombined.csv')
     DatasetsCombined.columns = ["text", "label"]
-    DatasetsCombined['text'] = DatasetsCombined['text'].apply(normalize_all_appy)
+    DatasetsCombined['text'] = DatasetsCombined['text'].apply(normalize_all_apply)
     DatasetsCombined = DatasetsCombined.drop_duplicates(subset=['text'], keep='first')
     DatasetsCombined = DatasetsCombined.dropna(subset=['text', 'label'])
     DatasetsCombined.to_csv('./output/3DatasetsCombined.csv', index=False)
@@ -77,7 +77,7 @@ def main():
     UCBerkeley = UCBerkeley[["hate_speech_score", "text"]]
     UCBerkeley.columns = ["label", "text"]
     UCBerkeley = UCBerkeley.reindex(columns=["text", "label"])
-    UCBerkeley['text'] = UCBerkeley['text'].apply(normalize_all_appy)
+    UCBerkeley['text'] = UCBerkeley['text'].apply(normalize_all_apply)
     UCBerkeley['label'] = UCBerkeley['label'].apply(recode_UCBerkeley_label)
     UCBerkeley = UCBerkeley.drop_duplicates(subset=['text'], keep='first')
     UCBerkeley = UCBerkeley.dropna(subset=['text', 'label'])
