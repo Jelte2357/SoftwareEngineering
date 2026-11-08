@@ -46,7 +46,7 @@ validated = [
     "hello this is subscript text",
     "hello this is superscript text",
     "hello this is superscript text"
-    ]
+]
 
 class NormalizeIntegrationTests(unittest.TestCase):
     def test_normalize_all_apply(self):

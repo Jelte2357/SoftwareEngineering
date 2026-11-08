@@ -37,6 +37,7 @@ def run_all_tests():
             continue
 
         try:
+            print(f"Loading tests from {test_file}")
             all_tests.addTests(loader.loadTestsFromModule(load_test_module(test_file))) # simply incredibly coding again
 
         except Exception as e:
