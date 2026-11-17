@@ -1,8 +1,8 @@
 # Hate-Speech Detection Backend
 
-This repository contains the backend service for a hate-speech detection system. It accepts text-classification requests over HTTP, dispatches work through RabbitMQ, runs a saved DistilBERT sequence-classification model, and stores prediction-cache and user-feedback records in SQLite.
+This folder contains the backend service for a hate-speech detection system. It accepts text-classification requests over HTTP, dispatches work through RabbitMQ, runs a saved DistilBERT sentence-classification model, and stores prediction-cache and user-feedback records in SQLite.
 
-This documentation describes the backend implementation included in this repository. The model-training code, curated training datasets, label definitions, and model evaluation results are not included in the supplied backend archive.
+This documentation describes the backend implementation included in this repository. The model-training code, curated training datasets, label definitions, and model evaluation results are not included in other folders.
 
 ## Table of contents
 
@@ -366,8 +366,6 @@ The supplied command notes include these examples for starting two worker proces
 **Worker 1**
 
 ```powershell
-$env:WORKER_ID = "worker-1"
-$env:PORT = "4352"
 $env:DB_PATH = "$PWD\worker1.db"
 python app.py
 ```
@@ -375,20 +373,9 @@ python app.py
 **Worker 2**
 
 ```powershell
-$env:WORKER_ID = "worker-2"
-$env:PORT = "4353"
 $env:DB_PATH = "$PWD\worker2.db"
 python app.py
 ```
-
-There are important implementation limitations to understand before using these examples:
-
-- `WORKER_ID` is not read by the supplied worker implementation.
-- `PORT` is read by `app.py`, but it is not used to start an HTTP listener. Workers communicate through RabbitMQ; the Flask HTTP listener belongs to `orchestrator.py`.
-- `DB_PATH` is read by the database configuration. These examples therefore give each worker a separate SQLite database file. The caches and feedback records will not be shared between those workers.
-- Both workers consume from the configured RabbitMQ job queue. RabbitMQ distributes available jobs among consumers; the examples do not create separate HTTP worker services.
-
-For a simple local setup, one worker using the default database path is sufficient. Use separate `DB_PATH` values only if separate per-process databases are intentional.
 
 ### RabbitMQ management interface
 
@@ -397,28 +384,6 @@ Open the management interface in a browser:
 `http://localhost:15672/#/`
 
 The AMQP connection used by the backend is configured separately through the RabbitMQ environment variables described in [Configuration](#configuration).
-
-### Stop or restart the local RabbitMQ container
-
-To stop the container:
-
-```powershell
-docker stop rabbitmq-poc
-```
-
-To start the existing container again:
-
-```powershell
-docker start rabbitmq-poc
-```
-
-To inspect running containers:
-
-```powershell
-docker ps
-```
-
-These Docker commands manage the RabbitMQ container only. Stop the Python worker and orchestrator from their respective terminals using `Ctrl+C`.
 
 ## Configuration
 
