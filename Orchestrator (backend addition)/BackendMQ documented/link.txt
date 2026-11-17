@@ -1,0 +1,6 @@
+https://jelte2357.nl/distilbert_classifier.zip
+
+This should be put in the current folder like this:
+outputs/distilbert_classifier
+Make sure that it is NOT 
+outputs/distilbert_classifier/distilbert_classifier
