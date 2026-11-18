@@ -36,7 +36,7 @@ GRADIENT_ACCUMULATION = 2       # Effective batch size = 16 * 2 = 32.
 LEARNING_RATE = 2e-5
 WEIGHT_DECAY = 0.01
 MAX_EPOCHS = 3
-MAX_TRAIN_EXAMPLES: int | None = 50_000 # None  # Set to 50_000 for a quick run; None uses all training rows.
+MAX_TRAIN_EXAMPLES: int | None = None # None  # Set to 50_000 for a quick run; None uses all training rows.
 
 CACHE_ROOT = Path("cache")
 OUTPUT_DIR = Path("outputs")
