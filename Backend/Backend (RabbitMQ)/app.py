@@ -1,3 +1,10 @@
+"""RabbitMQ worker for hate-speech prediction and user reclassification.
+
+This module loads the configured DistilBERT predictor and SQLite database,
+implements the prediction and feedback tasks, and consumes jobs from the
+RabbitMQ queue configured in config.py. Results are returned through the
+reply queue supplied with each message. Run this module to start the worker."""
+
 import hashlib
 from predict import HateSpeechPredictor
 from config import *
@@ -17,6 +24,19 @@ classifier = HateSpeechPredictor(
 db = Database(db_path=DB_PATH)
 
 def predict_texts(texts: tuple[str]) -> list[float]:
+    """Predict scores for normalized texts, reusing cached results where possible.
+
+    Args:
+        texts: Tuple of input strings. Repeated strings are deduplicated for lookup
+            and inference, while the returned list preserves the original order
+            and multiplicity.
+
+    Returns:
+        One probability score per input string, in the same order as ``texts``.
+
+    Notes:
+        Text is hashed with BLAKE2b. The database lock covers cache lookup,
+        inference for cache misses, and insertion of newly calculated scores."""
     unique_texts = dict.fromkeys(texts)  # Remove duplicates while preserving order
     text_to_hash = {text: hashlib.blake2b(text.encode("utf-8")).hexdigest() for text in unique_texts}
     hash_to_text = {hash: text for text, hash in text_to_hash.items()}
@@ -34,6 +54,18 @@ def predict_texts(texts: tuple[str]) -> list[float]:
     return [all_predictions[text] for text in texts]
 
 def predict(payload: dict) -> dict:
+    """Normalize a keyed payload and classify each supplied text.
+
+    Args:
+        payload: Mapping-like dictionary whose keys identify texts and whose
+            values are the input strings.
+
+    Returns:
+        Dictionary mapping each original payload key to its prediction score.
+
+    Notes:
+        The values are processed with normalize.normalize_all_apply before the
+        cache/inference stage. The original keys are retained in the result."""
     keys, texts = zip(*payload.items())
     texts = cast(tuple[str], tuple(map(normalize.normalize_all_apply, texts)))
     predictions = predict_texts(texts)
@@ -41,6 +73,17 @@ def predict(payload: dict) -> dict:
     return results
 
 def reclassify(payload: dict) -> dict:
+    """Store a user-provided reclassification flag for a text hash.
+
+    Args:
+        payload: Dictionary containing ``text`` and ``flag`` fields.
+
+    Returns:
+        Dictionary containing the BLAKE2b hash, supplied flag, and save message.
+
+    Notes:
+        This operation records feedback in hash_flags. It does not retrain the
+        model or update the cached prediction score."""
     text = payload["text"]
     flag = bool(payload["flag"])
     
@@ -52,6 +95,18 @@ def reclassify(payload: dict) -> dict:
     return {"hash": text_hash, "flag": payload["flag"], "message": "saved"}
 
 def callback(ch, method, properties, body):
+    """Handle one RabbitMQ job and publish its result to the reply queue.
+
+    Args:
+        ch: Pika channel used to publish the response and acknowledge the job.
+        method: Delivery metadata, including the message delivery tag.
+        properties: AMQP properties containing correlation and reply information.
+        body: UTF-8 encoded JSON job message.
+
+    Notes:
+        Supported task names are ``predict`` and ``reclassify``. Exceptions are
+        converted into an error response. The delivery is acknowledged after the
+        response-publishing attempt."""
     job_id = properties.correlation_id
     started = time.perf_counter()
 
@@ -93,6 +148,12 @@ def callback(ch, method, properties, body):
     )
 
 def start_consumer():
+    """Continuously connect to RabbitMQ and consume worker jobs.
+
+    The function declares the durable job queue, limits unacknowledged work to
+    one message with basic_qos(prefetch_count=1), and registers callback as the
+    message handler. If the consumer exits because of an exception, it waits five
+    seconds before attempting to reconnect. Connections are closed in finally."""
     while True:
         connection = None
         try:

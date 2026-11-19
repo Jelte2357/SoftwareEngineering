@@ -1,3 +1,10 @@
+"""Flask HTTP API and RabbitMQ request-response orchestrator.
+
+The API accepts prediction and reclassification requests, validates their
+JSON payloads, publishes jobs to the configured RabbitMQ queue, and waits for
+the worker response on a temporary exclusive reply queue. The Flask service
+runs on port 4351 when this module is executed directly."""
+
 from flask import Flask, jsonify, request
 import pika
 from config import *
@@ -11,6 +18,23 @@ app = Flask(__name__)
 REPLY_TIMEOUT_SECONDS = 60
 
 def send_and_recieve_job(job: dict):
+    """Publish a job and wait for the matching RabbitMQ response.
+
+    Args:
+        job: JSON-serializable job dictionary containing a task and payload.
+
+    Returns:
+        The ``result`` value from the worker's response message.
+
+    Raises:
+        TimeoutError: If no matching response arrives before the configured
+            reply timeout.
+        ValueError: If the worker response contains an ``error`` field.
+        pika.exceptions.AMQPError or OSError: If RabbitMQ communication fails.
+
+    Notes:
+        A UUID correlation ID associates the response with this request. A
+        temporary exclusive auto-delete reply queue is created for the request."""
     correlation_id = str(uuid.uuid4())
     response = None
 
@@ -66,6 +90,15 @@ def send_and_recieve_job(job: dict):
 @app.post("/api/predict")
 def api_predict():
     
+    """Validate and submit a batch of texts for prediction.
+
+    Accepts a JSON object whose string keys identify input texts and whose
+    string values contain the text to classify. The job is sent to the worker
+    through RabbitMQ and the worker result is returned as JSON.
+
+    Returns:
+        Flask JSON response with HTTP 200 on success, or an error response using
+        the status codes selected by the validation/exception branches."""
     if not request.is_json:
         return jsonify({
             "error": "Content-Type must be application/json."
@@ -113,6 +146,15 @@ def api_predict():
 
 @app.post("/api/reclassify")
 def api_reclassify():
+    """Validate and submit a user reclassification record.
+
+    Expects a JSON object containing a string ``text`` and a boolean-like
+    ``flag`` (a bool or integer 0/1). The request is forwarded to the worker as a
+    ``reclassify`` task; this endpoint records feedback rather than retraining.
+
+    Returns:
+        Flask JSON response containing the worker result, or an error response
+        using the status codes selected by the validation/exception branches."""
     if not request.is_json:
         return jsonify({
             "error": "Content-Type must be application/json."

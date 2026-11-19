@@ -1,3 +1,12 @@
+"""Text normalization helpers used before hate-speech inference.
+
+The functions in this module standardize punctuation and Unicode, redact
+URLs and email addresses, remove or decode selected obfuscation patterns,
+and provide additional dataset-oriented cleanup helpers. normalize_all_apply
+combines several of these operations into the preprocessing path used by the
+worker. These transformations are deterministic text processing; they do not
+perform hate-speech classification themselves."""
+
 import re
 import unicodedata
 
@@ -5,6 +14,14 @@ URL_PATTERN = re.compile(r"(https?://\S+|www\.\S+\.\S+)", re.IGNORECASE) # Websi
 EMAIL_PATTERN = re.compile(r"\b[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}\b") # Email addresses
 
 def _redact_structural_tokens(text: str) -> str:
+    """Replace recognized URLs and email addresses with placeholder tokens.
+
+    Args:
+        text: Text in which structural tokens should be redacted.
+
+    Returns:
+        Text with matched URLs replaced by ``url`` and email addresses by
+        ``email``."""
     text = URL_PATTERN.sub(" url ", text)
     text = EMAIL_PATTERN.sub(" email ", text)
     return text
@@ -16,6 +33,14 @@ PUNCTUATION_MAP = {
 }
 
 def _fix_punctuation(text: str) -> str:
+    """Normalize selected typographic punctuation and repeated punctuation.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text with mapped quotation/dash characters standardized and runs of
+        selected punctuation reduced to one character."""
     text = "".join(PUNCTUATION_MAP.get(c, c) for c in text)
     text = re.sub(r"([.,!?'\"]){2,}", r"\1", text)  # Replace repeated punctuation (. , ! ? ' ") with a single instance
     return text
@@ -26,6 +51,15 @@ LEET_MAP = {
 
 def _leetspeak_word(word: str) -> str:
     # Requires at least 2 real letters, at least one leet character, and the leet characters not outnumbering the real letters.
+    """Decode selected leetspeak characters when the word looks obfuscated.
+
+    Args:
+        word: A whitespace-delimited token.
+
+    Returns:
+        The decoded token when it meets the letter/leet-character heuristics;
+        otherwise the original token. Leading/trailing @ and ! receive special
+        handling to avoid unnecessarily changing mentions and exclamations."""
     letters = sum(c.isalpha() for c in word)
     leets = sum(c in LEET_MAP for c in word)
     if letters < 2 or leets == 0 or leets > letters:
@@ -72,6 +106,13 @@ LOOKALIKE_MAP = {
 }
 
 def _fix_lookalikes(text: str) -> str:
+    """Replace configured Cyrillic and Greek homoglyphs with Latin lookalikes.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text with characters present in LOOKALIKE_MAP replaced."""
     return "".join(LOOKALIKE_MAP.get(c, c) for c in text)
 
 NORMAL_TO_FLIP = {
@@ -103,10 +144,27 @@ _DISTINCTIVE_FLIP_CHARS |= set(SUPERSCRIPT_TO_LETTER.keys())
 _DISTINCTIVE_FLIP_CHARS |= set(SUBSCRIPT_TO_LETTER.keys())
 
 def _decode_flip_char(c: str) -> str:
+    """Decode one configured upside-down, superscript, or subscript character.
+
+    Args:
+        c: Single character to decode.
+
+    Returns:
+        Corresponding normal character when a mapping exists; otherwise ``c``."""
     base = SUPERSCRIPT_TO_LETTER.get(c, SUBSCRIPT_TO_LETTER.get(c, c))
     return FLIP_TO_NORMAL.get(base, base)
 
 def _looks_upside_down(text: str, threshold: float = 0.3) -> bool:
+    """Determine whether enough letters resemble upside-down characters.
+
+    Args:
+        text: Text to inspect.
+        threshold: Minimum fraction of alphabetic characters that must be
+            distinctive flip characters. Defaults to 0.3.
+
+    Returns:
+        True when at least four alphabetic characters are present and the
+        distinctive-character ratio meets the threshold; otherwise False."""
     letters = [c for c in text if c.isalpha()]
     if len(letters) < 4:
         return False
@@ -114,11 +172,25 @@ def _looks_upside_down(text: str, threshold: float = 0.3) -> bool:
     return (flip_count / len(letters)) >= threshold
 
 def _fix_upside_down(text: str) -> str:
+    """Decode mapped characters and reverse their order.
+
+    Args:
+        text: Text suspected to be written upside down.
+
+    Returns:
+        Reversed text with recognized flip characters decoded."""
     decoded = [_decode_flip_char(c) for c in text]
     decoded.reverse()
     return "".join(decoded)
 
 def _strip_combining_marks(text: str) -> str:
+    """Remove Unicode combining-mark characters in categories Mn and Me.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text without the selected combining marks."""
     return "".join(c for c in text if unicodedata.category(c) not in {"Mn", "Me"})
 
 EMOJI_PATTERN = re.compile( # This is just regex for all emojis
@@ -141,6 +213,13 @@ EMOJI_PATTERN = re.compile( # This is just regex for all emojis
 VARIATION_SELECTORS = re.compile(r"[\uFE00-\uFE0F]")
 
 def _strip_emoji(text: str) -> str:
+    """Remove characters matched by the configured emoji and variation-selector patterns.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text with matched emoji ranges and variation selectors removed."""
     text = EMOJI_PATTERN.sub("", text)
     text = VARIATION_SELECTORS.sub("", text)
     return text
@@ -152,9 +231,29 @@ WIDE_SPACE = re.compile(r"[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]")
 ZERO_WIDTH = re.compile(r"[\u200B\u200C\u200D\uFEFF\u2060]")
 
 def _only_printable(text: str) -> str:
+    """Keep printable characters and explicitly permitted whitespace.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text containing printable characters, newline, carriage return, tabs,
+        and whitespace characters."""
     return "".join(c for c in text if c.isprintable() or c in "\n\r\t" or c.isspace())
 
 def normalize_text(text: str) -> str:
+    """Apply the main normalization pipeline to an input value.
+
+    Args:
+        text: Input value. Non-string values are converted with ``str``.
+
+    Returns:
+        Lowercase, whitespace-normalized text after structural-token redaction,
+        punctuation and Unicode normalization, selected obfuscation decoding,
+        emoji removal, and removal of non-printable characters.
+
+    Notes:
+        The order of operations is significant and follows the implementation."""
     if not isinstance(text, str):
         text = str(text)
 
@@ -182,31 +281,87 @@ def normalize_text(text: str) -> str:
     return text
 
 def normalize_to_ascii(text: str) -> str:
+    """Normalize text and then transliterate it to ASCII where possible.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Normalized text decomposed with NFKD and encoded as ASCII, with
+        unrepresentable characters ignored."""
     text = normalize_text(text)
     text = unicodedata.normalize("NFKD", text)
     text = text.encode("ascii", "ignore").decode("ascii")
     return text
 
 def drop_RT(text: str) -> str:
+    """Remove the exact substring `` RT `` from the input text.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text after literal replacement. Other placements of ``RT`` are unchanged."""
     return text.replace(" RT ", "")
 
 def replace_at_usernames(text: str) -> str:
+    """Replace @-prefixed word-character usernames with a user placeholder.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text in which at-sign-prefixed word-character usernames are replaced by ``user``."""
     return re.sub(r"@\w+", " user ", text)
 
 def remove_ampersand_with_hashtag_numbers(text: str) -> str:
+    """Remove HTML-style numeric character references matching ``&#digits;``.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text with matching numeric references removed."""
     return re.sub(r"&#\d+;", "", text)
 
 def remove_andamp(text: str) -> str:
+    """Replace literal ``&amp;`` entities with the word ``and``.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text after literal replacement."""
     return text.replace("&amp;", " and ")
 
 def fix_beginning_end_quotes(text: str) -> str:
     # Removes quotation marks (" or ') at the beginning and end of entire text; only if they are at both ends and are the same type of quote.
+    """Remove matching quote characters at both ends of the whole string.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Text without the first and last character when both are the same single
+        or double quote and the string has at least two characters. Otherwise,
+        returns the stripped input."""
     if len(text) >= 2 and text[0] == text[-1] and text[0] in {"'", '"'}:
         return text[1:-1]
     return text.strip()
     
 
 def normalize_all_apply(text: str, keep_usernames: bool = True) -> str:
+    """Run the complete preprocessing sequence used by the worker.
+
+    Args:
+        text: Input text.
+        keep_usernames: If False, replace @-usernames with ``user`` before the
+            main normalization. Defaults to True.
+
+    Returns:
+        Text after retweet-marker cleanup, optional username replacement,
+        numeric-entity removal, ampersand-entity replacement, main normalization,
+        and matching outer-quote handling."""
     text = drop_RT(text)
     if not keep_usernames:
         text = replace_at_usernames(text)

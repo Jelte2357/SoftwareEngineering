@@ -1,3 +1,10 @@
+"""DistilBERT sequence-classification model loading and inference.
+
+HateSpeechPredictor loads a tokenizer and sequence-classification model from
+MODEL_DIR, selects CUDA when available (otherwise CPU), and performs batched
+inference. The predictor returns the probability at output index 1 for each
+input text; the meaning of that index depends on the model's label mapping."""
+
 from __future__ import annotations
 import argparse
 import os
@@ -32,6 +39,16 @@ class HateSpeechPredictor:
         max_length: int = MAX_LENGTH,
         batch_size: int = INFERENCE_BATCH_SIZE,
     ) -> None:
+        """Initialize the tokenizer, model, device, and inference settings.
+
+        Args:
+            model_dir: Directory containing the saved Hugging Face model and tokenizer.
+            max_length: Maximum token sequence length passed to the tokenizer.
+            batch_size: Number of texts processed in each inference batch.
+
+        Notes:
+            The model is loaded from ``model_dir``, moved to the selected device, and
+            switched to evaluation mode before predictions are requested."""
         model_dir = Path(model_dir).expanduser()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         

@@ -1,3 +1,9 @@
+"""Central configuration for model, database, request limits, and RabbitMQ.
+
+Values are read from environment variables with local-development defaults.
+Other backend modules import these settings to locate the model and database,
+set queue names and connection parameters, and enforce request-size limits."""
+
 import os
 from pathlib import Path
 

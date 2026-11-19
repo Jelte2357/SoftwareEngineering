@@ -1,3 +1,11 @@
+"""Concurrent HTTP load and response-format test for the prediction endpoint.
+
+The script generates synthetic text payloads, sends them concurrently to the
+local Flask orchestrator, validates that each response contains the expected
+keys and floating-point scores in the interval [0, 1], and reports success
+counts and average request duration. It is a standalone test utility, not a
+unit-test suite and not a test of model quality."""
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 import string
@@ -11,6 +19,14 @@ CONCURRENCY = 10
 TIMEOUT = 10
 
 def make_fake_text(number):
+    """Generate one keyed payload containing synthetic random text samples.
+
+    Args:
+        number: Request number used to construct stable payload keys.
+
+    Returns:
+        Dictionary containing TEXTS_PER_REQUEST entries. Each value consists of
+        eight randomly generated eight-character alphanumeric tokens."""
     alphabet = string.ascii_letters + string.digits
     return {
         f"request_{number:03d}_text_{text_number:02d}": " ".join(
@@ -22,6 +38,15 @@ def make_fake_text(number):
 
 
 def send_request(payload):
+    """POST one payload and validate the prediction API response.
+
+    Args:
+        payload: Dictionary of request keys to input text strings.
+
+    Returns:
+        Tuple ``(success, elapsed_seconds, error_message)``. On success the
+        error message is None; on failure it describes the validation or request
+        error."""
     st = time.perf_counter()
     
     try:
