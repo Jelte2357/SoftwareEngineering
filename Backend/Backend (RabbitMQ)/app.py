@@ -90,7 +90,7 @@ def reclassify(payload: dict) -> dict:
     text_hash = hashlib.blake2b(text.encode("utf-8")).hexdigest()
     
     with db.lock:
-        db.insert_flag(text_hash, flag) #I don't know if we need to change the insert_flag function at all, I am not really an expert in conn.execute()
+        db.insert_flag(text_hash, flag) 
     
     return {"hash": text_hash, "flag": payload["flag"], "message": "saved"}
 

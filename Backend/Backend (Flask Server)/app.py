@@ -34,13 +34,6 @@ def predict_texts(texts: tuple[str]) -> list[float]:
     
     all_predictions = {**known_predictions, **missing_predictions}
     return [all_predictions[text] for text in texts]
-    
-    
-    # unique_predictions = classifier.predict(missing)
-    # mapping = dict(zip(missing, unique_predictions)) | known
-    # predictions = [mapping[text] for text in texts]
-    # return predictions
-
 
 @app.route("/api/predict", methods=["POST"]) 
 def api_predict():
@@ -68,7 +61,6 @@ def api_predict():
         }), 413
     
     keys, texts = zip(*payload.items())
-    # print(texts, type(texts))
     texts = cast(tuple[str], tuple(map(normalize.normalize_all_apply, texts)))
     predictions = predict_texts(texts)
     results = dict(zip(keys, predictions))
@@ -90,10 +82,10 @@ def api_reclassify():
             "error": "Request body must be a JSON object."
         }), 400
 
-    text = payload.get("text") #so this one is for text
-    flag = payload.get("flag") #this one is for 0 or 1 depending on user input
+    text = payload.get("text") 
+    flag = payload.get("flag") 
 
-    if not isinstance(text, str) or not (isinstance(flag, bool) or (isinstance(flag, int) and flag in (0, 1))): #I don't know if this should be and or or, like I don't think any of them can be wrong, so and seems fine but idk kept or for now
+    if not isinstance(text, str) or not (isinstance(flag, bool) or (isinstance(flag, int) and flag in (0, 1))):
         return jsonify({
             "error": "Request body must contain 'text' (string) and 'flag' (boolean)."
         }), 418 
@@ -106,7 +98,7 @@ def api_reclassify():
     text_hash = hashlib.blake2b(text.encode("utf-8")).hexdigest()
 
     with db.lock:
-        db.insert_flag(text_hash, bool(flag)) #I don't know if we need to change the insert_flag function at all, I am not really an expert in conn.execute()
+        db.insert_flag(text_hash, bool(flag)) 
 
     return jsonify({"hash": text_hash, "flag": flag, "message": "saved"}), 200
 
