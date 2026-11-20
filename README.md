@@ -8,3 +8,5 @@ This repository has the browser client, two backend implementations (Flask-Only 
 - [Backend: RabbitMQ service](Backend/Backend%20(RabbitMQ)/README.md): architecture, setup, API
 
 The extension needs a compatible running prediction API. Configure its Server URL with the full `/api/predict` route. See the frontend guide for the included Flask and RabbitMQ endpoint examples.
+
+###### Note: Github copilot is labled as a contributor only because one merge conflict was automatically resolved.
