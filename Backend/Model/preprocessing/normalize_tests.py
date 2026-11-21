@@ -17,6 +17,7 @@ class NormalizeTests(unittest.TestCase):
         self.assertEqual(_leetspeak_word("h3ll0"), "hello")
         self.assertEqual(_leetspeak_word("w0rld"), "world")
         self.assertEqual(_leetspeak_word("leet"), "leet")
+        self.assertEqual(_leetspeak_word("f@gg0t"), "faggot")
         self.assertEqual(_leetspeak_word("1337"), "1337") # Not "clearly" leetspeak
 
     def test_strip_emoji(self):
