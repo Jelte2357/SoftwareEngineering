@@ -1,6 +1,6 @@
 const default_settings = {
     threshold: 0.5,
-    server_url: "http://127.0.0.1:4352/",
+    server_url: "http://127.0.0.1:4351/api/predict",
     wait_seconds: 2,
     non_block_sites: [],
     settings_version: 3
