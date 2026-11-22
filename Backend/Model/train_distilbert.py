@@ -3,6 +3,7 @@
 Windows-friendly defaults: DataLoader(num_workers=0), disk-backed HF Datasets,
 256-token truncation, dynamic padding, mixed precision on CUDA, and checkpoints.
 """
+from __future__ import annotations
 import lightning as L
 import numpy as np
 import shutil
@@ -15,7 +16,6 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from torchmetrics.classification import MulticlassF1Score
 from typing import Any
-from __future__ import annotations
 
 from transformers import (
     AutoModelForSequenceClassification,

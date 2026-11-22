@@ -1,3 +1,4 @@
+from __future__ import annotations
 import argparse
 import os
 import torch
@@ -5,7 +6,7 @@ import torch
 from pathlib import Path
 from transformers import (AutoModelForSequenceClassification, AutoTokenizer)
 from typing import Sequence
-from __future__ import annotations
+
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_DIR = Path(

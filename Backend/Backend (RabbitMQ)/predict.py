@@ -4,11 +4,12 @@ HateSpeechPredictor loads a tokenizer and sequence-classification model from
 MODEL_DIR, selects CUDA when available (otherwise CPU), and performs batched
 inference. The predictor returns the probability at output index 1 for each
 input text; the meaning of that index depends on the model's label mapping."""
+from __future__ import annotations
 import argparse
 import os
 import torch
 
-from __future__ import annotations
+
 from pathlib import Path
 from transformers import (AutoModelForSequenceClassification, AutoTokenizer)
 from typing import Sequence

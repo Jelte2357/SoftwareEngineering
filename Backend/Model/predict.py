@@ -1,9 +1,10 @@
 """Run predictions using the model saved by train_distilbert.py."""
+from __future__ import annotations
 import argparse
 import time
 import torch
 
-from __future__ import annotations
+
 from pathlib import Path
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from typing import Sequence
