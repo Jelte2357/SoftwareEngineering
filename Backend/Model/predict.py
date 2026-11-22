@@ -4,7 +4,6 @@ import argparse
 import time
 import torch
 
-
 from pathlib import Path
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from typing import Sequence
@@ -74,11 +73,6 @@ def main() -> None:
     )
     args = parser.parse_args()
     texts = args.text
-    
-    # import pandas as pd
-    # data = pd.read_csv("data.csv")
-    # sample = data.sample(n=5000, random_state=42)
-    # texts = sample["text"].tolist()
     
     predictions = predict(texts, args.model_dir)
     for text, result in zip(texts, predictions):
