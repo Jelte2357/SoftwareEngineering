@@ -1,19 +1,16 @@
 """Run predictions using the model saved by train_distilbert.py."""
-from __future__ import annotations
-
 import argparse
-from pathlib import Path
-from typing import Sequence
-
-import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-
 import time
+import torch
+
+from __future__ import annotations
+from pathlib import Path
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from typing import Sequence
 
 MODEL_DIR = Path("outputs/distilbert_classifier")
 MAX_LENGTH = 256
 INFERENCE_BATCH_SIZE = 32
-
 
 def predict(texts: Sequence[str], model_dir: Path = MODEL_DIR) -> list[dict[str, float | int]]:
     if not texts:
@@ -60,7 +57,6 @@ def predict(texts: Sequence[str], model_dir: Path = MODEL_DIR) -> list[dict[str,
         print(f"Predictions completed in {et - st:.2f} seconds.")
     return results
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Predict labels for text with DistilBERT.")
     parser.add_argument(
@@ -76,7 +72,6 @@ def main() -> None:
         help="Directory containing the trained Hugging Face model.",
     )
     args = parser.parse_args()
-
     texts = args.text
     
     # import pandas as pd
@@ -84,15 +79,12 @@ def main() -> None:
     # sample = data.sample(n=5000, random_state=42)
     # texts = sample["text"].tolist()
     
-    
     predictions = predict(texts, args.model_dir)
-
     for text, result in zip(texts, predictions):
         print(f"text: {text}")
         print(f"predicted_label: 0  confidence: {result['label_0_confidence']:.4f}")
         print(f"predicted_label: 1  confidence: {result['label_1_confidence']:.4f}")
         print()
-
 
 if __name__ == "__main__":
     main()

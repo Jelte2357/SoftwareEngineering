@@ -1,8 +1,10 @@
 import pandas as pd
-import unittest
-import requests
 import random
+import requests
+import unittest
+
 from string import printable
+
 #--- Tests ---
 
 def generate_random_string(length: int) -> str:

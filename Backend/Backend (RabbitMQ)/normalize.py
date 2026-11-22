@@ -258,7 +258,6 @@ def normalize_text(text: str) -> str:
         text = str(text)
 
     text = text.replace(" #", " ")
-    
     text = _redact_structural_tokens(text)
     text = _fix_punctuation(text)
     text = unicodedata.normalize("NFKC", text)
@@ -275,7 +274,6 @@ def normalize_text(text: str) -> str:
     text = SEPARATOR_BETWEEN_WORDS.sub(" ", text)
     text = " ".join(_leetspeak_word(w) for w in text.split())
     text = re.sub(r"\s+", " ", text).strip().lower()
-
     text = _only_printable(text)
 
     return text
@@ -349,7 +347,6 @@ def fix_beginning_end_quotes(text: str) -> str:
         return text[1:-1]
     return text.strip()
     
-
 def normalize_all_apply(text: str, keep_usernames: bool = True) -> str:
     """Run the complete preprocessing sequence used by the worker.
 

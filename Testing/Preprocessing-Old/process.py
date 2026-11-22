@@ -52,18 +52,6 @@ def main():
     HateSpeechDataset = remove_specific_hatespeech_dataset(HateSpeechDataset)
     HateSpeechDataset.to_csv('./output/HateSpeechDataset.csv', index=False)
 
-    # Already in 3DatasetsCombined.csv
-    # # XXX Process labeled_data (tweets)
-    # labeled_data = pd.read_csv('./input/labeled_data.csv')
-    # labeled_data.drop(columns=["count", "hate_speech", "offensive_language", "neither"], inplace=True)
-    # labeled_data.drop(labeled_data.columns[0], axis=1, inplace=True)
-    # labeled_data.columns = ["label", "text"]
-    # labeled_data = labeled_data.reindex(columns=["text", "label"])
-    # labeled_data['text'] = labeled_data['text'].apply(normalize_all_apply)
-    # labeled_data = labeled_data.drop_duplicates(subset=['text'], keep='first')
-    # labeled_data = labeled_data.dropna(subset=['text', 'label'])
-    # labeled_data.to_csv('./output/labeled_data.csv', index=False)
-
     # XXX Process 3DatasetsCombined (possibly bad)
     DatasetsCombined = pd.read_csv('./input/3DatasetsCombined.csv')
     DatasetsCombined.columns = ["text", "label"]

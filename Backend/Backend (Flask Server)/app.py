@@ -1,11 +1,11 @@
 import hashlib
-from flask import Flask, jsonify, request
-from predict import HateSpeechPredictor
+import normalize
+
 from config import *
 from database import Database
-import normalize
+from flask import Flask, jsonify, request
+from predict import HateSpeechPredictor
 from typing import cast
-
 
 app = Flask(__name__)
 

@@ -5,9 +5,9 @@ are keyed by a 128-character hexadecimal text hash, while flags record a
 boolean user-provided label associated with a hash. A threading lock is
 exposed for callers that coordinate access through this Database instance."""
 
-from config import DB_PATH
 import sqlite3
 import threading
+from config import DB_PATH
 
 class Database:
     """Small SQLite access layer for prediction scores and feedback flags.

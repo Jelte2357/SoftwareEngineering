@@ -6,16 +6,16 @@ RabbitMQ queue configured in config.py. Results are returned through the
 reply queue supplied with each message. Run this module to start the worker."""
 
 import hashlib
-from predict import HateSpeechPredictor
-from config import *
-from database import Database
-import normalize
-from typing import cast
-
-import pika
 import json
+import pika
+import normalize
 import os
 import time
+
+from config import *
+from database import Database
+from predict import HateSpeechPredictor
+from typing import cast
 
 classifier = HateSpeechPredictor(
     model_dir=MODEL_DIR,
@@ -86,12 +86,11 @@ def reclassify(payload: dict) -> dict:
         model or update the cached prediction score."""
     text = payload["text"]
     flag = bool(payload["flag"])
-    
     text_hash = hashlib.blake2b(text.encode("utf-8")).hexdigest()
     
     with db.lock:
         db.insert_flag(text_hash, flag) 
-    
+
     return {"hash": text_hash, "flag": payload["flag"], "message": "saved"}
 
 def callback(ch, method, properties, body):
@@ -158,7 +157,6 @@ def start_consumer():
         connection = None
         try:
             connection = pika.BlockingConnection(CONNECTION_PARAMETERS)
-            
             channel = connection.channel()
             channel.queue_declare(
                 queue=JOB_QUEUE, 
@@ -166,9 +164,7 @@ def start_consumer():
             )
             
             channel.basic_qos(prefetch_count=1)
-
             print("Connected to RabbitMQ")
-
             channel.basic_consume(
                 queue=JOB_QUEUE,
                 on_message_callback=callback,

@@ -1,7 +1,7 @@
-
+import importlib.util
 import sys
 import unittest
-import importlib.util
+
 from pathlib import Path
 
 def load_test_module(test_file: Path):
@@ -18,17 +18,14 @@ def load_test_module(test_file: Path):
             raise ImportError(f"No loader for spec of {test_file}")
         
         spec.loader.exec_module(module)
-
         return module
 
     finally:
         sys.path.remove(test_dir) # Does not remove the actual file path, it removes it from PATH (very different guys, dont worry)
 
-
 def run_all_tests():
     project_root = Path(__file__).resolve().parent
     test_files = project_root.rglob("*_tests.py")
-
     loader = unittest.TestLoader()
     all_tests = unittest.TestSuite()
 
@@ -46,9 +43,7 @@ def run_all_tests():
 
     runner = unittest.TextTestRunner()
     result = runner.run(all_tests)
-
     sys.exit(not result.wasSuccessful())
-
 
 if __name__ == "__main__":
     run_all_tests()

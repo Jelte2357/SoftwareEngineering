@@ -1,4 +1,3 @@
-
 import pika
 
 # RabbitMQ connection credentials
@@ -30,10 +29,7 @@ channel.basic_qos(prefetch_count=1)
 print("Orchestrator is running...")
 print("Waiting for incoming requests...")
 
-
-
 def forward_request(ch, method, properties, body):
-
     print("\nReceived a request from the interface.")
 
     try:
@@ -57,12 +53,10 @@ def forward_request(ch, method, properties, body):
 
         # Acknowledge the original message
         ch.basic_ack(delivery_tag=method.delivery_tag)
-
         print("Original request acknowledged.")
 
     except (pika.exceptions.NackError,
             pika.exceptions.UnroutableError) as error:
-
         print(f"Message was not confirmed: {error}")
 
         # Return the original message to the queue
@@ -70,8 +64,6 @@ def forward_request(ch, method, properties, body):
             delivery_tag=method.delivery_tag,
             requeue=True
         )
-
-
 
 # Listen for incoming interface requests
 channel.basic_consume(

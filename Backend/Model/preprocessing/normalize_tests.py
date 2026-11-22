@@ -4,7 +4,6 @@ import unittest
 from normalize import fix_beginning_end_quotes, _leetspeak_word, _strip_emoji
 
 #--- Tests ---
-
 class NormalizeTests(unittest.TestCase):
     def test_fix_beginning_end_quotes(self): # Tests if the function removes quotes at the beginning and end of the text
         self.assertEqual(fix_beginning_end_quotes('"Hello World"'), "Hello World")

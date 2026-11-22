@@ -1,7 +1,8 @@
-import pandas as pd
-import unittest
-import predict
 import database
+import pandas as pd
+import predict
+import unittest
+
 #--- Tests ---
 
 class ServerTests(unittest.TestCase):

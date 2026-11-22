@@ -4,15 +4,13 @@ The API accepts prediction and reclassification requests, validates their
 JSON payloads, publishes jobs to the configured RabbitMQ queue, and waits for
 the worker response on a temporary exclusive reply queue. The Flask service
 runs on port 4351 when this module is executed directly."""
-
-from flask import Flask, jsonify, request
-import pika
-from config import *
 import json
+import pika
 import time
 import uuid
 
-
+from config import *
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 REPLY_TIMEOUT_SECONDS = 60
@@ -45,7 +43,6 @@ def send_and_recieve_job(job: dict):
         channel.queue_declare(queue=JOB_QUEUE, durable=True)
         reply_queue = channel.queue_declare(queue="", exclusive=True, auto_delete=True).method.queue
 
-        # I hate nesting functions but I could not for the life of me figure out how not to.
         def on_response(ch, method, properties, body):
             nonlocal response
             if properties.correlation_id == correlation_id:

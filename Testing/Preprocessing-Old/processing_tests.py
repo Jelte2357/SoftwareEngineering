@@ -16,7 +16,7 @@ class ProcessingTests(unittest.TestCase):
             "text": ["Greetings", "", "man", "   "],
             "label": [1, 0, 1, 0]
         })
-
+        
         result = remove_empty_text_row_cmnts(df)
         self.assertEqual(list(result["text"]), ["Greetings", "man"])
 

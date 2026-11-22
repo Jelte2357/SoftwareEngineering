@@ -1,6 +1,7 @@
-from config import DB_PATH
 import sqlite3
 import threading
+
+from config import DB_PATH
 
 class Database:
     def __init__(self, db_path=DB_PATH):

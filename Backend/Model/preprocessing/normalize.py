@@ -157,7 +157,6 @@ def normalize_text(text: str) -> str:
         text = str(text)
 
     text = text.replace(" #", " ")
-    
     text = _redact_structural_tokens(text)
     text = _fix_punctuation(text)
     text = unicodedata.normalize("NFKC", text)
@@ -165,6 +164,7 @@ def normalize_text(text: str) -> str:
     text = _strip_emoji(text)
     text = REPEAT_CHAR.sub(r"\1\1", text)
     text = _fix_lookalikes(text)
+
     if _looks_upside_down(text):
         text = _fix_upside_down(text)
 
@@ -173,9 +173,7 @@ def normalize_text(text: str) -> str:
     text = SEPARATOR_BETWEEN_WORDS.sub(" ", text)
     text = " ".join(_leetspeak_word(w) for w in text.split())
     text = re.sub(r"\s+", " ", text).strip().lower()
-
     text = _only_printable(text)
-
     return text
 
 def normalize_to_ascii(text: str) -> str:
@@ -202,7 +200,6 @@ def fix_beginning_end_quotes(text: str) -> str:
         return text[1:-1]
     return text.strip()
     
-
 def normalize_all_apply(text: str, keep_usernames: bool = True) -> str:
     text = drop_RT(text)
     if not keep_usernames:

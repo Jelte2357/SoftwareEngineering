@@ -1,4 +1,3 @@
-
 import pika
 import json
 import uuid
@@ -31,7 +30,6 @@ responses = {}
 pending_requests = {}
 
 def on_response(ch, method, properties, body):
-
     correlation_id = properties.correlation_id
 
     # Check whether this response belongs to one of our requests
@@ -42,7 +40,6 @@ def on_response(ch, method, properties, body):
 
         # Store the received response
         responses[correlation_id] = json.loads(body.decode())
-
         print(f"Received response for: {request_id}")
     
 # Listen to the temporary reply queue

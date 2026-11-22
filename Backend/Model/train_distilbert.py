@@ -3,20 +3,20 @@
 Windows-friendly defaults: DataLoader(num_workers=0), disk-backed HF Datasets,
 256-token truncation, dynamic padding, mixed precision on CUDA, and checkpoints.
 """
-from __future__ import annotations
-
-import shutil
-from pathlib import Path
-from typing import Any
-
 import lightning as L
 import numpy as np
+import shutil
 import torch
+
 from datasets import DatasetDict, load_dataset, load_from_disk
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
+from pathlib import Path
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from torchmetrics.classification import MulticlassF1Score
+from typing import Any
+from __future__ import annotations
+
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -24,25 +24,23 @@ from transformers import (
     get_linear_schedule_with_warmup,
 )
 
-# ----------------------------- Configuration -----------------------------
-CSV_PATH = Path("data.csv")  # Put your CSV beside this script, or change this path.
+CSV_PATH = Path("data.csv") 
 MODEL_NAME = "distilbert/distilbert-base-uncased"
 MAX_LENGTH = 256
 VALIDATION_FRACTION = 0.05
 SEED = 42
 
-BATCH_SIZE = 16                 # Reduce to 8 or 4 if you run out of GPU memory.
-GRADIENT_ACCUMULATION = 2       # Effective batch size = 16 * 2 = 32.
+BATCH_SIZE = 16                 
+GRADIENT_ACCUMULATION = 2       
 LEARNING_RATE = 2e-5
 WEIGHT_DECAY = 0.01
 MAX_EPOCHS = 3
-MAX_TRAIN_EXAMPLES: int | None = None # None  # Set to 50_000 for a quick run; None uses all training rows.
+MAX_TRAIN_EXAMPLES: int | None = None 
 
 CACHE_ROOT = Path("cache")
 OUTPUT_DIR = Path("outputs")
 FINAL_MODEL_DIR = OUTPUT_DIR / "distilbert_classifier"
-NUM_WORKERS = 0                 # Safe default for Windows.
-
+NUM_WORKERS = 0                 
 
 class DistilBERTLightningModule(L.LightningModule):
     def __init__(
@@ -116,7 +114,6 @@ class DistilBERTLightningModule(L.LightningModule):
             "lr_scheduler": {"scheduler": scheduler, "interval": "step"},
         }
 
-
 def _cache_path(csv_path: Path) -> Path:
     """Change the cache path when the input file's size or modification time changes."""
     stat = csv_path.stat()
@@ -124,7 +121,6 @@ def _cache_path(csv_path: Path) -> Path:
     return CACHE_ROOT / (
         f"{csv_path.stem}_{stat.st_size}_{stat.st_mtime_ns}_{model_slug}_max{MAX_LENGTH}"
     )
-
 
 def prepare_datasets(csv_path: Path, tokenizer: Any) -> DatasetDict:
     if not csv_path.exists():
@@ -211,6 +207,7 @@ def prepare_datasets(csv_path: Path, tokenizer: Any) -> DatasetDict:
         remove_columns=["text"],
         desc=f"Tokenizing training data (max {MAX_LENGTH} tokens)",
     )
+
     val_tokens = val_raw.map(
         tokenize_batch,
         batched=True,
@@ -224,7 +221,6 @@ def prepare_datasets(csv_path: Path, tokenizer: Any) -> DatasetDict:
     tokenized.save_to_disk(str(cache_dir))
     print(f"Saved tokenized cache to: {cache_dir}")
     return tokenized
-
 
 def main() -> None:
     L.seed_everything(SEED, workers=True)

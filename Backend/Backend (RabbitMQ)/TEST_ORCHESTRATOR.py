@@ -5,12 +5,12 @@ local Flask orchestrator, validates that each response contains the expected
 keys and floating-point scores in the interval [0, 1], and reports success
 counts and average request duration. It is a standalone test utility, not a
 unit-test suite and not a test of model quality."""
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import random
 import requests
 import string
 import time
-import random
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 URL = "http://127.0.0.1:4351/api/predict"
 REQUEST_COUNT = 100
@@ -35,7 +35,6 @@ def make_fake_text(number):
         )
         for text_number in range(TEXTS_PER_REQUEST)
     }
-
 
 def send_request(payload):
     """POST one payload and validate the prediction API response.

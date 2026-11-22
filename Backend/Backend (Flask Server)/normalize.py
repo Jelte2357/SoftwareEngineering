@@ -32,7 +32,7 @@ def _leetspeak_word(word: str) -> str:
         return word
 
     # Keep leading/trailing @ and ! intact unless the word contains another
-    # kind of leetspeak character.  This avoids corrupting mentions and
+    # kind of leetspeak character. This avoids corrupting mentions and
     # exclamations while still decoding them when they are clearly obfuscated.
     has_other_leet = any(c in LEET_MAP and c not in "@!" for c in word)
     last_index = len(word) - 1
@@ -159,7 +159,6 @@ def normalize_text(text: str) -> str:
         text = str(text)
 
     text = text.replace(" #", " ")
-    
     text = _redact_structural_tokens(text)
     text = _fix_punctuation(text)
     text = unicodedata.normalize("NFKC", text)
@@ -176,9 +175,7 @@ def normalize_text(text: str) -> str:
     text = SEPARATOR_BETWEEN_WORDS.sub(" ", text)
     text = " ".join(_leetspeak_word(w) for w in text.split())
     text = re.sub(r"\s+", " ", text).strip().lower()
-
     text = _only_printable(text)
-
     return text
 
 def normalize_to_ascii(text: str) -> str:

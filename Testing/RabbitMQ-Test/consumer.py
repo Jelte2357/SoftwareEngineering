@@ -1,9 +1,9 @@
-
-import pika
 import json
+import pika
 import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import os
+
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 # --------------------------------------------------
 # LOAD THE LOCAL DISTILBERT MODEL

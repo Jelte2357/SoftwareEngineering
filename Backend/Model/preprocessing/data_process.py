@@ -10,8 +10,6 @@ label_data, label = data.Label, list(map(int, data.Label.to_list()))
 
 normalized_text = [normalize_all_apply(t) for t in tqdm(text, total=len(text), desc="Normalizing text")]
 
-
-
 total = 0
 mapping = {}
 conflicting_pairs = set()
