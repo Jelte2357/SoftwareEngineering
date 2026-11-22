@@ -25,3 +25,4 @@ The output contains a the predicted classes (`0` and `1` [no hatespeech / hatesp
 - Training defaults to three epochs, with early stopping and a best-validation-macro-F1 checkpoint. A 5% validation split is held out from training.
 
 The model predicts labels from examples; it must still be trained on your CSV before `predict.py` can be used.
+In order to correctly run train_distilbert.py, unzip the dataset (data.7z) to a csv. Then run train_distilbert.py.
