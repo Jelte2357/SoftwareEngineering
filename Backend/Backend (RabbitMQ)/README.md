@@ -332,7 +332,7 @@ In a second terminal, also from the backend directory, run:
 python orchestrator.py
 ```
 
-The orchestrator exposes the HTTP API on `0.0.0.0:4351` when run directly.
+The orchestrator exposes the HTTP API on `0.0.0.0:4352` when run directly.
 
 ### 5. Run the API load test
 

@@ -12,7 +12,7 @@ import time
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-URL = "http://127.0.0.1:4351/api/predict"
+URL = "http://127.0.0.1:4352/api/predict"
 REQUEST_COUNT = 100
 TEXTS_PER_REQUEST = 60
 CONCURRENCY = 10

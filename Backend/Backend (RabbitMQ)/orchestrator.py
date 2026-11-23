@@ -3,7 +3,7 @@
 The API accepts prediction and reclassification requests, validates their
 JSON payloads, publishes jobs to the configured RabbitMQ queue, and waits for
 the worker response on a temporary exclusive reply queue. The Flask service
-runs on port 4351 when this module is executed directly."""
+runs on port 4352 when this module is executed directly."""
 import json
 import pika
 import time
@@ -195,4 +195,4 @@ def api_reclassify():
         }), 503
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=4351, threaded=True, debug=False)
+    app.run(host="0.0.0.0", port=4352, threaded=True, debug=False)
